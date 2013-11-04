@@ -12,6 +12,11 @@
         <link href='http://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
         <title>Rob's Wall Tablet</title>
         <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+            }
+        </script>
         <script type="text/javascript" src="js/wall-tab-main.js"></script>
         <script type="text/javascript" src="js/wall-tab-app.js"></script>
         <script type="text/javascript" src="js/tile-colours.js"></script>
