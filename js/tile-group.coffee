@@ -16,38 +16,22 @@ class TileGroup
 	numTiles: ->
 		@tiles.length
 
-	getColsInGroupSimple: (tilesDown) ->
-		@tilePositions = []
-		vacantCells = []
-		colIdx = 0
-		rowIdx = 0
-		for tile in @tiles
-			while (colIdx + rowIdx*100) in vacantCells
-				rowIdx+=1
-				if rowIdx >= tilesDown
-					rowIdx = 0
-					colIdx += 1
-			@tilePositions.push [ colIdx, rowIdx ]
-			if tile.colSpan > 1
-				for i in [1..tile.colSpan-1]
-					vacantCells.push ((colIdx + i) + (rowIdx * 100))
-			rowIdx += 1
-			if rowIdx >= tilesDown
-				rowIdx = 0
-				colIdx += 1
-		#Math.floor((group.numTiles() + @tilesDown - 1) / @tilesDown)
-		colIdx + 1
-
 	findBestPlaceForTile: (colSpan, tilesDown, tilesAcross) ->
+		# Algorithm to find best location for a tile
+		# Exhaustive search for a gap large enough
 		bestColIdx = 0
 		bestRowIdx = 0
+		# This time work across - filling each row before moving down
 		for rowIdx in [0..tilesDown-1]
 			for colIdx in [0..tilesAcross-1]
+				# Check if the tile will fit in the remaining columns
 				if ((colIdx + colSpan) > tilesAcross) then continue
 				posValid = true
 				for tilePos in @tilePositions
 					if tilePos[1] isnt rowIdx
 						continue
+					# Go through each remaining column that would be covered
+					# and check the new tile doesn't impinge on existing tile
 					for colTest in [colIdx..colIdx+colSpan-1]
 						for spanTest in [tilePos[0]..tilePos[0]+tilePos[2]-1] 
 							if spanTest is colTest
@@ -61,6 +45,9 @@ class TileGroup
 		[bestColIdx, bestRowIdx, colSpan]
 
 	getColsInGroup: (tilesDown) ->
+		# Simple algorithm to find the number of columns in a tile-group
+		# May get it wrong if there are many wider tiles and not enough single
+		# tiles to fill the gaps
 		@tiles.sort(@sortByTileWidth)
 		@tilePositions = []
 		cellCount = 0

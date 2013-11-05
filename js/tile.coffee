@@ -9,7 +9,7 @@ class Tile
 			<a class="sqTile" id="#{@tileId}" href="javascript:void(0);" style="background-color:#{@bkColour};display:block;opacity:1;">
 			  <div class="sqInner">
 			  </div>
-			</div>
+			</a>
 			"""
 		if @clickFn?
 			$("##{@tileId}").click =>

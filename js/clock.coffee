@@ -22,7 +22,6 @@ class Clock extends Tile
 		shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 		setInterval =>
 			dt = new Date()
-			# $("."+cssTag+" .sqClockDow").html dayNames[dt.getDay()]
 			$('#'+@tileId+" .sqClockDayMonthYear").html shortDayNames[dt.getDay()] + " " + dt.getDate() + " " + shortMonthNames[dt.getMonth()] + " " + dt.getFullYear()
 			$('#'+@tileId+" .sqClockHours").html (if dt.getHours() < 10 then "0" else "") + dt.getHours()
 			$('#'+@tileId+" .sqClockMins").html (if dt.getMinutes() < 10 then "0" else "") + dt.getMinutes()

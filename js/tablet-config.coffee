@@ -4,6 +4,8 @@ class TabletConfig
 	setReadyCallback: (@readyCallback) ->
 
 	initTabletConfig: ->
+		# To avoid giving each tablet a name or other ID
+		# the tablet's IP address is used to retrieve the config
 		$.ajax @configURL,
 			type: "GET"
 			dataType: "text"
