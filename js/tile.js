@@ -15,7 +15,7 @@ Tile = (function() {
     var _this = this;
     this.parentTag = "#sqTileContainer";
     this.tileId = "sqTile" + this.tileIdx;
-    $(this.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" href=\"javascript:void(0);\" style=\"background-color:" + this.bkColour + ";display:block;opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</div>");
+    $(this.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" href=\"javascript:void(0);\" style=\"background-color:" + this.bkColour + ";display:block;opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
     if (this.clickFn != null) {
       $("#" + this.tileId).click(function() {
         return _this.clickFn(_this.clickParam);
