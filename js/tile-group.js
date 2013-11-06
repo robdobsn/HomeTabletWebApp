@@ -68,7 +68,7 @@ TileGroup = (function() {
     return [bestColIdx, bestRowIdx, colSpan];
   };
 
-  TileGroup.prototype.getColsInGroup = function(tilesDown) {
+  TileGroup.prototype.getColsInGroup = function(tilesDown, isPortrait) {
     var cellCount, estColCount, maxColSpan, tile, tileIdx, _i, _j, _len, _len1, _ref, _ref1;
     this.tiles.sort(this.sortByTileWidth);
     this.tilePositions = [];
@@ -77,25 +77,23 @@ TileGroup = (function() {
     _ref = this.tiles;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tile = _ref[_i];
-      cellCount += tile.colSpan;
-      maxColSpan = maxColSpan < tile.colSpan ? tile.colSpan : maxColSpan;
+      if (tile.isVisible(isPortrait)) {
+        cellCount += tile.tileBasics.colSpan;
+        maxColSpan = maxColSpan < tile.tileBasics.colSpan ? tile.tileBasics.colSpan : maxColSpan;
+      }
     }
     estColCount = Math.floor((cellCount + tilesDown - 1) / tilesDown);
     estColCount = estColCount < maxColSpan ? maxColSpan : estColCount;
     _ref1 = this.tiles;
     for (tileIdx = _j = 0, _len1 = _ref1.length; _j < _len1; tileIdx = ++_j) {
       tile = _ref1[tileIdx];
-      this.tilePositions.push(this.findBestPlaceForTile(tile.colSpan, tilesDown, estColCount));
+      if (tile.isVisible(isPortrait)) {
+        this.tilePositions.push(this.findBestPlaceForTile(tile.tileBasics.colSpan, tilesDown, estColCount));
+      } else {
+        this.tilePositions.push([0, 0, 0]);
+      }
     }
     return estColCount;
-  };
-
-  TileGroup.prototype.addTile = function(tileColour, colSpan) {
-    var tile;
-    tile = new Tile(tileColour, colSpan);
-    tile.setTileIndex(this.tileContainer.getNextTileIdx());
-    tile.addToDoc();
-    return this.tiles.push(tile);
   };
 
   TileGroup.prototype.addExistingTile = function(tile) {
@@ -105,10 +103,10 @@ TileGroup = (function() {
   };
 
   TileGroup.prototype.sortByTileWidth = function(a, b) {
-    return a.colSpan - b.colSpan;
+    return a.tileBasics.colSpan - b.tileBasics.colSpan;
   };
 
-  TileGroup.prototype.repositionTiles = function() {
+  TileGroup.prototype.repositionTiles = function(isPortrait) {
     var fontScaling, fontSize, tile, tileHeight, tileIdx, tileWidth, titleX, titleY, xPos, yPos, _i, _len, _ref, _ref1, _ref2, _ref3, _results;
     _ref = this.tileContainer.getGroupTitlePos(this.groupIdx), titleX = _ref[0], titleY = _ref[1], fontSize = _ref[2];
     $("#" + this.groupIdTag).css({
@@ -120,9 +118,13 @@ TileGroup = (function() {
     _results = [];
     for (tileIdx = _i = 0, _len = _ref1.length; _i < _len; tileIdx = ++_i) {
       tile = _ref1[tileIdx];
-      _ref2 = this.tileContainer.getTileSize(tile.colSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
-      _ref3 = this.tileContainer.getCellPos(this.groupIdx, this.tilePositions[tileIdx][0], this.tilePositions[tileIdx][1]), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
-      _results.push(this.tiles[tileIdx].reposition(xPos, yPos, tileWidth, tileHeight, fontScaling));
+      if (tile.isVisible(isPortrait)) {
+        _ref2 = this.tileContainer.getTileSize(tile.tileBasics.colSpan), tileWidth = _ref2[0], tileHeight = _ref2[1];
+        _ref3 = this.tileContainer.getCellPos(this.groupIdx, this.tilePositions[tileIdx][0], this.tilePositions[tileIdx][1]), xPos = _ref3[0], yPos = _ref3[1], fontScaling = _ref3[2];
+        _results.push(tile.reposition(xPos, yPos, tileWidth, tileHeight, fontScaling));
+      } else {
+        _results.push(tile.setInvisible());
+      }
     }
     return _results;
   };
@@ -133,7 +135,7 @@ TileGroup = (function() {
     _ref = this.tiles;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       tile = _ref[_i];
-      if (tile.tileName === tileName) {
+      if (tile.tileBasics.tileName === tileName) {
         existingTile = tile;
         break;
       }

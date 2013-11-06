@@ -2,12 +2,8 @@
 var Tile;
 
 Tile = (function() {
-  function Tile(bkColour, colSpan, clickFn, clickParam, tileName) {
-    this.bkColour = bkColour;
-    this.colSpan = colSpan;
-    this.clickFn = clickFn;
-    this.clickParam = clickParam;
-    this.tileName = tileName;
+  function Tile(tileBasics) {
+    this.tileBasics = tileBasics;
     this.contentFontScaling = 1;
   }
 
@@ -15,10 +11,10 @@ Tile = (function() {
     var _this = this;
     this.parentTag = "#sqTileContainer";
     this.tileId = "sqTile" + this.tileIdx;
-    $(this.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" href=\"javascript:void(0);\" style=\"background-color:" + this.bkColour + ";display:block;opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
-    if (this.clickFn != null) {
+    $(this.parentTag).append("<a class=\"sqTile\" id=\"" + this.tileId + "\" \n		href=\"javascript:void(0);\" \n		style=\"background-color:" + this.tileBasics.bkColour + ";\n				display:block; opacity:1;\">\n  <div class=\"sqInner\">\n  </div>\n</a>");
+    if (this.tileBasics.clickFn != null) {
       $("#" + this.tileId).click(function() {
-        return _this.clickFn(_this.clickParam);
+        return _this.tileBasics.clickFn(_this.tileBasics.clickParam);
       });
     }
     return this.contents = $("#" + this.tileId + ">.sqInner");
@@ -47,7 +43,8 @@ Tile = (function() {
       "margin-top": posY + "px",
       "width": sizeX + "px",
       "height": sizeY + "px",
-      "font-size": (fontScaling * this.contentFontScaling) + "%"
+      "font-size": (fontScaling * this.contentFontScaling) + "%",
+      "display": "block"
     });
   };
 
@@ -58,6 +55,25 @@ Tile = (function() {
 
   Tile.prototype.getElement = function(element) {
     return $('#' + this.tileId + " " + element);
+  };
+
+  Tile.prototype.isVisible = function(isPortrait) {
+    if (this.tileBasics.visibility === "all") {
+      return true;
+    }
+    if (this.tileBasics.visibility === "portrait" && isPortrait) {
+      return true;
+    }
+    if (this.tileBasics.visibility === "landscape" && (!isPortrait)) {
+      return true;
+    }
+    return false;
+  };
+
+  Tile.prototype.setInvisible = function() {
+    return $('#' + this.tileId).css({
+      "display": "none"
+    });
   };
 
   return Tile;

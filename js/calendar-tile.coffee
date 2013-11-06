@@ -1,6 +1,6 @@
 class CalendarTile extends Tile
-	constructor: (bkColour, colSpan, clickFn, clickParam, tileName, @calendarURL, @calDayIndex) ->
-		super bkColour, colSpan, clickFn, clickParam, tileName
+	constructor: (tileBasics, @calendarURL, @calDayIndex) ->
+		super tileBasics
 		@shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 		@calLineCount = 0; @calCharCount = 0; @calMaxLineLen = 0
 

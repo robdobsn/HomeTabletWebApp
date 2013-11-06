@@ -37,11 +37,11 @@ TileContainer = (function() {
   };
 
   TileContainer.prototype.calcLayout = function() {
-    var group, isPortrait, winHeight, winWidth, _i, _len, _ref, _results;
+    var group, isPortrait, winHeight, winWidth, _i, _len, _ref;
     winWidth = $(window).width();
     winHeight = $(window).height();
     isPortrait = winWidth < winHeight;
-    this.tilesAcross = isPortrait ? 2 : 6;
+    this.tilesAcross = isPortrait ? 3 : 5;
     this.tilesDown = isPortrait ? 5 : 3;
     this.cellWidth = winWidth / this.tilesAcross;
     this.cellHeight = (winHeight - this.groupTitlesTopMargin) / this.tilesDown;
@@ -49,12 +49,11 @@ TileContainer = (function() {
     this.tileHeight = this.cellHeight - this.tileSepYPixels;
     this.groupCols = [];
     _ref = this.groups;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
-      _results.push(this.groupCols.push(group.getColsInGroup(this.tilesDown)));
+      this.groupCols.push(group.getColsInGroup(this.tilesDown, isPortrait));
     }
-    return _results;
+    return isPortrait;
   };
 
   TileContainer.prototype.getTileSize = function(colSpan) {
@@ -103,13 +102,13 @@ TileContainer = (function() {
   };
 
   TileContainer.prototype.reDoLayout = function() {
-    var group, _i, _len, _ref, _results;
-    this.calcLayout();
+    var group, isPortrait, _i, _len, _ref, _results;
+    isPortrait = this.calcLayout();
     _ref = this.groups;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       group = _ref[_i];
-      _results.push(group.repositionTiles());
+      _results.push(group.repositionTiles(isPortrait));
     }
     return _results;
   };

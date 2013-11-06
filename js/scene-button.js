@@ -6,10 +6,10 @@ var SceneButton,
 SceneButton = (function(_super) {
   __extends(SceneButton, _super);
 
-  function SceneButton(bkColour, colSpan, clickFn, clickParam, tileName, iconType, buttonText) {
+  function SceneButton(tileBasics, iconType, buttonText) {
     this.iconType = iconType;
     this.buttonText = buttonText;
-    SceneButton.__super__.constructor.call(this, bkColour, colSpan, clickFn, clickParam, tileName);
+    SceneButton.__super__.constructor.call(this, tileBasics);
   }
 
   SceneButton.prototype.addToDoc = function(elemToAddTo) {

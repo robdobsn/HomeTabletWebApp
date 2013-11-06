@@ -30,7 +30,7 @@ WallTabApp = (function() {
     this.favouritesGroupIdx = this.tileContainer.addGroup("Home");
     this.addClock(this.favouritesGroupIdx);
     this.calendarGroupIdx = this.tileContainer.addGroup("Calendar");
-    this.addCalendar(this.calendarGroupIdx);
+    this.addCalendar();
     this.sceneGroupIdx = this.tileContainer.addGroup("Scenes");
     this.tileContainer.reDoLayout();
     $(window).on('orientationchange', function() {
@@ -51,24 +51,60 @@ WallTabApp = (function() {
   };
 
   WallTabApp.prototype.addClock = function(groupIdx) {
-    var tile;
-    tile = new Clock(this.tileColours.getNextColour(), 3, null, "", "clock");
+    var tile, tileBasics, visibility;
+    visibility = "all";
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 3, null, "", "clock", visibility);
+    tile = new Clock(tileBasics);
     return this.tileContainer.addTileToGroup(groupIdx, tile);
   };
 
-  WallTabApp.prototype.addCalendar = function(groupIdx) {
-    var i, tile, _i, _results;
+  WallTabApp.prototype.addCalendar = function(onlyAddToGroupIdx) {
+    var calDayIdx, calG, colSpan, colSpans, favG, groupIdx, groupInfo, i, orientation, tile, tileBasics, visibility, _i, _results;
+    if (onlyAddToGroupIdx == null) {
+      onlyAddToGroupIdx = null;
+    }
     _results = [];
-    for (i = _i = 0; _i <= 2; i = ++_i) {
-      tile = new CalendarTile(this.tileColours.getNextColour(), 2, null, "", "calendar", this.calendarUrl, i);
-      _results.push(this.tileContainer.addTileToGroup(groupIdx, tile));
+    for (orientation = _i = 0; _i <= 1; orientation = ++_i) {
+      calG = this.calendarGroupIdx;
+      favG = this.favouritesGroupIdx;
+      if (orientation === 0) {
+        visibility = "all";
+        groupInfo = [calG, calG, calG];
+        calDayIdx = [0, 1, 2];
+        colSpans = [2, 2, 2];
+      } else {
+        visibility = "portrait";
+        groupInfo = [favG, favG, calG, calG];
+        calDayIdx = [0, 1, 3, 4];
+        colSpans = [3, 3, 2, 2];
+      }
+      _results.push((function() {
+        var _j, _ref, _results1;
+        _results1 = [];
+        for (i = _j = 0, _ref = groupInfo.length - 1; 0 <= _ref ? _j <= _ref : _j >= _ref; i = 0 <= _ref ? ++_j : --_j) {
+          groupIdx = groupInfo[i];
+          colSpan = colSpans[i];
+          if (!((onlyAddToGroupIdx != null) && (onlyAddToGroupIdx !== groupIdx))) {
+            tileBasics = new TileBasics(this.tileColours.getNextColour(), colSpan, null, "", "calendar", visibility);
+            tile = new CalendarTile(tileBasics, this.calendarUrl, calDayIdx[i]);
+            _results1.push(this.tileContainer.addTileToGroup(groupIdx, tile));
+          } else {
+            _results1.push(void 0);
+          }
+        }
+        return _results1;
+      }).call(this));
     }
     return _results;
   };
 
-  WallTabApp.prototype.makeSceneButton = function(groupIdx, name, uri) {
-    var tile;
-    tile = new SceneButton(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, "bulb-on", name);
+  WallTabApp.prototype.makeSceneButton = function(groupIdx, name, uri, visibility) {
+    var tile, tileBasics;
+    if (visibility == null) {
+      visibility = "all";
+    }
+    tileBasics = new TileBasics(this.tileColours.getNextColour(), 1, this.automationServer.executeCommand, uri, name, visibility);
+    tile = new SceneButton(tileBasics, "bulb-on", name);
     return this.tileContainer.addTileToGroup(groupIdx, tile);
   };
 
@@ -113,7 +149,7 @@ WallTabApp = (function() {
     var action, actionList, groupIdx, servType, _i, _len, _ref;
     this.tileContainer.clearTiles();
     this.addClock(this.favouritesGroupIdx);
-    this.addCalendar(this.calendarGroupIdx);
+    this.addCalendar();
     _ref = this.automationActionGroups;
     for (servType in _ref) {
       actionList = _ref[servType];
@@ -141,12 +177,13 @@ WallTabApp = (function() {
     var actionName, existingTile, uiGroup, _results;
     this.tileContainer.clearTileGroup(this.favouritesGroupIdx);
     this.addClock(this.favouritesGroupIdx);
+    this.addCalendar(this.favouritesGroupIdx);
     _results = [];
     for (actionName in jsonConfig) {
       uiGroup = jsonConfig[actionName];
       existingTile = this.tileContainer.findExistingTile(actionName);
       if (existingTile !== null) {
-        _results.push(this.makeSceneButton(this.favouritesGroupIdx, actionName, existingTile.clickParam));
+        _results.push(this.makeSceneButton(this.favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam));
       } else {
         _results.push(void 0);
       }

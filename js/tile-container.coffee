@@ -31,7 +31,7 @@ class TileContainer
 		winWidth = $(window).width()
 		winHeight = $(window).height()
 		isPortrait = (winWidth < winHeight)
-		@tilesAcross = if isPortrait then 2 else 6
+		@tilesAcross = if isPortrait then 3 else 5
 		@tilesDown = if isPortrait then 5 else 3
 		@cellWidth = winWidth / @tilesAcross
 		@cellHeight = (winHeight - @groupTitlesTopMargin) / @tilesDown
@@ -39,7 +39,8 @@ class TileContainer
 		@tileHeight = @cellHeight - @tileSepYPixels
 		@groupCols = []
 		for group in @groups
-			@groupCols.push group.getColsInGroup(@tilesDown)
+			@groupCols.push group.getColsInGroup(@tilesDown, isPortrait)
+		isPortrait
 
 	getTileSize: (colSpan) ->
 		[@tileWidth * colSpan + (@tileSepXPixels * (colSpan-1)), @tileHeight]
@@ -76,9 +77,9 @@ class TileContainer
 		@groups[groupIdx].addExistingTile tile 
 
 	reDoLayout: ->
-		@calcLayout()
+		isPortrait = @calcLayout()
 		for group in @groups
-			group.repositionTiles()
+			group.repositionTiles(isPortrait)
 
 	findExistingTile: (tileName) ->
 		existingTile = null

@@ -44,7 +44,7 @@ class TileGroup
 			if posValid then break
 		[bestColIdx, bestRowIdx, colSpan]
 
-	getColsInGroup: (tilesDown) ->
+	getColsInGroup: (tilesDown, isPortrait) ->
 		# Simple algorithm to find the number of columns in a tile-group
 		# May get it wrong if there are many wider tiles and not enough single
 		# tiles to fill the gaps
@@ -53,19 +53,23 @@ class TileGroup
 		cellCount = 0
 		maxColSpan = 1
 		for tile in @tiles
-			cellCount += tile.colSpan
-			maxColSpan = if maxColSpan < tile.colSpan then tile.colSpan else maxColSpan
+			if tile.isVisible(isPortrait)
+				cellCount += tile.tileBasics.colSpan
+				maxColSpan = if maxColSpan < tile.tileBasics.colSpan then tile.tileBasics.colSpan else maxColSpan
 		estColCount = Math.floor((cellCount + tilesDown - 1) / tilesDown)
 		estColCount = if estColCount < maxColSpan then maxColSpan else estColCount
 		for tile, tileIdx in @tiles
-			@tilePositions.push @findBestPlaceForTile(tile.colSpan, tilesDown, estColCount)
+			if tile.isVisible(isPortrait)
+				@tilePositions.push @findBestPlaceForTile(tile.tileBasics.colSpan, tilesDown, estColCount)
+			else
+				@tilePositions.push [0,0,0]
 		estColCount
 
-	addTile: (tileColour, colSpan) ->
-		tile = new Tile tileColour, colSpan
-		tile.setTileIndex(@tileContainer.getNextTileIdx())
-		tile.addToDoc()
-		@tiles.push tile
+	# addTile: (tileColour, colSpan) ->
+	# 	tile = new Tile tileColour, colSpan
+	# 	tile.setTileIndex(@tileContainer.getNextTileIdx())
+	# 	tile.addToDoc()
+	# 	@tiles.push tile
 
 	addExistingTile: (tile) ->
 		tile.setTileIndex(@tileContainer.getNextTileIdx())
@@ -73,9 +77,9 @@ class TileGroup
 		@tiles.push tile
 
 	sortByTileWidth: (a, b) ->
-		a.colSpan - b.colSpan
+		a.tileBasics.colSpan - b.tileBasics.colSpan
 
-	repositionTiles: ->
+	repositionTiles: (isPortrait) ->
 		[titleX, titleY, fontSize] = @tileContainer.getGroupTitlePos(@groupIdx)
 		$("#"+@groupIdTag).css {
 			"margin-left": titleX + "px", 
@@ -84,14 +88,19 @@ class TileGroup
 			}
 		# Order tiles so widest are at the end
 		for tile, tileIdx in @tiles
-			[tileWidth, tileHeight] = @tileContainer.getTileSize(tile.colSpan)
-			[xPos, yPos, fontScaling] = @tileContainer.getCellPos(@groupIdx, @tilePositions[tileIdx][0], @tilePositions[tileIdx][1])
-			@tiles[tileIdx].reposition xPos, yPos, tileWidth, tileHeight, fontScaling
+			if tile.isVisible(isPortrait)
+				[tileWidth, tileHeight] = @tileContainer.getTileSize(tile.tileBasics.colSpan)
+				[xPos, yPos, fontScaling] = @tileContainer.getCellPos(@groupIdx, @tilePositions[tileIdx][0], @tilePositions[tileIdx][1])
+				tile.reposition xPos, yPos, tileWidth, tileHeight, fontScaling
+				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Pos " + xPos + " " + yPos
+			else
+				tile.setInvisible()
+				# console.log "Grp=" + @groupIdx + "Tile=" + tile.tileBasics.tileName + "(" + tileIdx + ") Invisible " + tile.tileBasics.visibility + " orient=" + isPortrait
 
 	findExistingTile: (tileName) ->
 		existingTile = null
 		for tile in @tiles
-			if tile.tileName is tileName
+			if tile.tileBasics.tileName is tileName
 				existingTile = tile
 				break
 		existingTile

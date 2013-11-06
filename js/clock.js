@@ -6,8 +6,8 @@ var Clock,
 Clock = (function(_super) {
   __extends(Clock, _super);
 
-  function Clock(bkColour, colSpan, clickFn, clickParam, tileName) {
-    Clock.__super__.constructor.call(this, bkColour, colSpan, clickFn, clickParam, tileName);
+  function Clock(tileBasics) {
+    Clock.__super__.constructor.call(this, tileBasics);
   }
 
   Clock.prototype.addToDoc = function(elemToAddTo) {

@@ -1,6 +1,6 @@
 class Clock extends Tile
-	constructor: (bkColour, colSpan, clickFn, clickParam, tileName) ->
-		super bkColour, colSpan, clickFn, clickParam, tileName
+	constructor: (tileBasics) ->
+		super tileBasics
 
 	addToDoc: (elemToAddTo) ->
 		super()

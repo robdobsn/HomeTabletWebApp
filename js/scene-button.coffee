@@ -1,6 +1,6 @@
 class SceneButton extends Tile
-	constructor: (bkColour, colSpan, clickFn, clickParam, tileName, @iconType, @buttonText) ->
-		super bkColour, colSpan, clickFn, clickParam, tileName
+	constructor: (tileBasics, @iconType, @buttonText) ->
+		super tileBasics
 
 	addToDoc: (elemToAddTo) ->
 		super()

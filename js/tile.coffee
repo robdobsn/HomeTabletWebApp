@@ -1,19 +1,22 @@
 class Tile
-	constructor: (@bkColour, @colSpan, @clickFn, @clickParam, @tileName) ->
+	constructor: (@tileBasics) ->
 		@contentFontScaling = 1
 
 	addToDoc: ->
 		@parentTag = "#sqTileContainer"
 		@tileId = "sqTile" + @tileIdx
 		$(@parentTag).append """
-			<a class="sqTile" id="#{@tileId}" href="javascript:void(0);" style="background-color:#{@bkColour};display:block;opacity:1;">
+			<a class="sqTile" id="#{@tileId}" 
+					href="javascript:void(0);" 
+					style="background-color:#{@tileBasics.bkColour};
+							display:block; opacity:1;">
 			  <div class="sqInner">
 			  </div>
 			</a>
 			"""
-		if @clickFn?
+		if @tileBasics.clickFn?
 			$("##{@tileId}").click =>
-				(@clickFn) @clickParam
+				(@tileBasics.clickFn) @tileBasics.clickParam
 		@contents = $("##{@tileId}>.sqInner")
 
 	removeFromDoc: ->
@@ -30,7 +33,8 @@ class Tile
 			"margin-top": posY + "px",
 			"width": sizeX + "px", 
 			"height": sizeY + "px", 
-			"font-size": (fontScaling * @contentFontScaling) + "%"
+			"font-size": (fontScaling * @contentFontScaling) + "%",
+			"display": "block"
 			}
 
 	setContentFontScaling: (@contentFontScaling) ->
@@ -38,3 +42,14 @@ class Tile
 
 	getElement: (element) ->
 		$('#'+@tileId + " " + element)
+
+	isVisible: (isPortrait) ->
+		if @tileBasics.visibility is "all" then return true
+		if @tileBasics.visibility is "portrait" and isPortrait then return true
+		if @tileBasics.visibility is "landscape" and (not isPortrait) then return true
+		return false
+
+	setInvisible: ->
+		$('#'+@tileId).css {
+			"display": "none"
+			}		

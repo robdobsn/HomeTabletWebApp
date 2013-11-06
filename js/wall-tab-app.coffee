@@ -41,7 +41,7 @@ class WallTabApp
 
         # Calendar group
         @calendarGroupIdx = @tileContainer.addGroup "Calendar"
-        @addCalendar(@calendarGroupIdx)
+        @addCalendar()
 
         # Scenes group
         @sceneGroupIdx = @tileContainer.addGroup "Scenes"
@@ -66,16 +66,36 @@ class WallTabApp
         @tabletConfig.initTabletConfig()
     
     addClock: (groupIdx) ->
-        tile = new Clock @tileColours.getNextColour(), 3, null, "", "clock"
+        visibility = "all"
+        tileBasics = new TileBasics @tileColours.getNextColour(), 3, null, "", "clock", visibility
+        tile = new Clock tileBasics
         @tileContainer.addTileToGroup(groupIdx, tile)
 
-    addCalendar: (groupIdx) ->
-        for i in [0..2]
-            tile = new CalendarTile @tileColours.getNextColour(), 2, null, "", "calendar", @calendarUrl, i
-            @tileContainer.addTileToGroup(groupIdx, tile)
+    addCalendar: (onlyAddToGroupIdx = null) ->
+        for orientation in [0..1]
+            calG = @calendarGroupIdx
+            favG = @favouritesGroupIdx
+            if orientation is 0
+                visibility = "all"
+                groupInfo = [ calG, calG, calG ]
+                calDayIdx = [ 0, 1, 2]
+                colSpans = [ 2, 2, 2]
+            else
+                visibility = "portrait"
+                groupInfo = [ favG, favG, calG, calG ]
+                calDayIdx = [ 0, 1, 3, 4]
+                colSpans = [ 3, 3, 2, 2]
+            for i in [0..groupInfo.length-1]
+                groupIdx = groupInfo[i]
+                colSpan = colSpans[i]
+                if not (onlyAddToGroupIdx? and (onlyAddToGroupIdx isnt groupIdx))
+                    tileBasics = new TileBasics @tileColours.getNextColour(), colSpan, null, "", "calendar", visibility
+                    tile = new CalendarTile tileBasics, @calendarUrl, calDayIdx[i]
+                    @tileContainer.addTileToGroup(groupIdx, tile)
 
-    makeSceneButton: (groupIdx, name, uri) ->
-        tile = new SceneButton @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, "bulb-on", name
+    makeSceneButton: (groupIdx, name, uri, visibility = "all") ->
+        tileBasics = new TileBasics @tileColours.getNextColour(), 1, @automationServer.executeCommand, uri, name, visibility
+        tile = new SceneButton tileBasics, "bulb-on", name
         @tileContainer.addTileToGroup(groupIdx, tile)
 
     automationServerReadyCb: (actions) =>
@@ -104,7 +124,7 @@ class WallTabApp
         @tileContainer.clearTiles()
         # Add the clock and calendar back in
         @addClock(@favouritesGroupIdx)
-        @addCalendar(@calendarGroupIdx)
+        @addCalendar()
         # Create tiles for all actions/scenes
         for servType, actionList of @automationActionGroups
             for action in actionList
@@ -129,11 +149,12 @@ class WallTabApp
         # Clear just the favourites group (and add clock back in)
         @tileContainer.clearTileGroup(@favouritesGroupIdx)
         @addClock(@favouritesGroupIdx)
+        @addCalendar(@favouritesGroupIdx)
         # Copy tiles that should be in favourites group
         for actionName, uiGroup of jsonConfig
             existingTile = @tileContainer.findExistingTile(actionName)
             if existingTile isnt null
-                @makeSceneButton @favouritesGroupIdx, actionName, existingTile.clickParam
+                @makeSceneButton @favouritesGroupIdx, actionName, existingTile.tileBasics.clickParam
 
     configReadyCb: (@jsonConfig) =>
         @applyJsonConfig(@jsonConfig)
