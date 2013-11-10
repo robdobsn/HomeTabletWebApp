@@ -9,7 +9,7 @@ WallTabApp = (function() {
     this.updateUIWithActionGroups = __bind(this.updateUIWithActionGroups, this);
     this.automationServerReadyCb = __bind(this.automationServerReadyCb, this);
     this.tileColours = new TileColours;
-    this.rdHomeServerUrl = "http://192.168.0.97:5000";
+    this.rdHomeServerUrl = "http://macallan:5000";
     this.calendarUrl = this.rdHomeServerUrl + "/calendars/api/v1.0/cal";
     this.automationServerUrl = this.rdHomeServerUrl + "/automation/api/v1.0";
     this.tabletConfigUrl = this.rdHomeServerUrl + "/tablet/api/v1.0/config";
@@ -42,7 +42,7 @@ WallTabApp = (function() {
     this.requestActionAndConfigData();
     return setInterval(function() {
       return _this.requestActionAndConfigData();
-    }, 36000000);
+    }, 300000);
   };
 
   WallTabApp.prototype.requestActionAndConfigData = function() {

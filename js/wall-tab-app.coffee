@@ -1,7 +1,7 @@
 class WallTabApp
     constructor: ->
         @tileColours = new TileColours
-        @rdHomeServerUrl = "http://192.168.0.97:5000"
+        @rdHomeServerUrl = "http://macallan:5000"
         @calendarUrl = @rdHomeServerUrl + "/calendars/api/v1.0/cal"
         @automationServerUrl = @rdHomeServerUrl + "/automation/api/v1.0"
         @tabletConfigUrl = @rdHomeServerUrl + "/tablet/api/v1.0/config"
@@ -59,7 +59,7 @@ class WallTabApp
         @requestActionAndConfigData()
         setInterval =>
             @requestActionAndConfigData()
-        , 36000000
+        , 300000
 
     requestActionAndConfigData: ->
         @automationServer.getActionGroups()
