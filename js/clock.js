@@ -8,26 +8,27 @@ Clock = (function(_super) {
 
   function Clock(tileBasics) {
     Clock.__super__.constructor.call(this, tileBasics);
+    this.dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    this.shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    this.monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    this.shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   }
 
   Clock.prototype.addToDoc = function(elemToAddTo) {
-    var cssTag, dayNames, monthNames, shortDayNames, shortMonthNames,
-      _this = this;
+    var cssTag;
     Clock.__super__.addToDoc.call(this);
     this.contents.append("<div class=\"sqClockDow\"></div>\n<div class=\"sqClockDayMonthYear\"></div>\n<ul class=\"sqClockTime\">\n	<li class=\"sqClockHours\">4</li> \n	<li class=\"sqClockPoint1\">:</li> \n	<li class=\"sqClockMins\"></li> \n	<li class=\"sqClockPoint2\">:</li> \n	<li class=\"sqClockSecs\"></li>\n</ul>");
     cssTag = "sqInner";
-    dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    shortDayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    shortMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return setInterval(function() {
-      var dt;
-      dt = new Date();
-      $('#' + _this.tileId + " .sqClockDayMonthYear").html(shortDayNames[dt.getDay()] + " " + dt.getDate() + " " + shortMonthNames[dt.getMonth()] + " " + dt.getFullYear());
-      $('#' + _this.tileId + " .sqClockHours").html((dt.getHours() < 10 ? "0" : "") + dt.getHours());
-      $('#' + _this.tileId + " .sqClockMins").html((dt.getMinutes() < 10 ? "0" : "") + dt.getMinutes());
-      return $('#' + _this.tileId + " .sqClockSecs").html((dt.getSeconds() < 10 ? "0" : "") + dt.getSeconds());
-    }, 1000);
+    return this.setRefreshInterval(1, this.updateClock, false);
+  };
+
+  Clock.prototype.updateClock = function() {
+    var dt;
+    dt = new Date();
+    $('#' + this.tileId + " .sqClockDayMonthYear").html(this.shortDayNames[dt.getDay()] + " " + dt.getDate() + " " + this.shortMonthNames[dt.getMonth()] + " " + dt.getFullYear());
+    $('#' + this.tileId + " .sqClockHours").html((dt.getHours() < 10 ? "0" : "") + dt.getHours());
+    $('#' + this.tileId + " .sqClockMins").html((dt.getMinutes() < 10 ? "0" : "") + dt.getMinutes());
+    return $('#' + this.tileId + " .sqClockSecs").html((dt.getSeconds() < 10 ? "0" : "") + dt.getSeconds());
   };
 
   return Clock;
