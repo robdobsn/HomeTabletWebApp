@@ -2,7 +2,7 @@ class TileContainer
 	constructor: (@parentTag, @groupTitlesTag) ->
 		@groups = []
 		@groupCols = []
-		@groupSepPixels = 40
+		@groupSepPixels = 30
 		@groupTitlesTopMargin = 60
 		@tileSepXPixels = 20
 		@tileSepYPixels = 20
@@ -33,7 +33,7 @@ class TileContainer
 		isPortrait = (winWidth < winHeight)
 		@tilesAcross = if isPortrait then 3 else 5
 		@tilesDown = if isPortrait then 5 else 3
-		@cellWidth = winWidth / @tilesAcross
+		@cellWidth = (winWidth - (@groupSepPixels * Math.floor((@tilesAcross - 1) / 3))) / @tilesAcross
 		@cellHeight = (winHeight - @groupTitlesTopMargin) / @tilesDown
 		@tileWidth = @cellWidth - @tileSepXPixels
 		@tileHeight = @cellHeight - @tileSepYPixels
