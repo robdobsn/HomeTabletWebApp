@@ -17,14 +17,10 @@ CalendarTile = (function(_super) {
   }
 
   CalendarTile.prototype.addToDoc = function(elemToAddTo) {
-    var cssTag,
-      _this = this;
+    var cssTag;
     CalendarTile.__super__.addToDoc.call(this);
     cssTag = "sqInner";
-    this.requestCalUpdate();
-    return setInterval(function() {
-      return _this.requestCalUpdate();
-    }, 600000);
+    return this.setRefreshInterval(300, this.requestCalUpdate, true);
   };
 
   CalendarTile.prototype.requestCalUpdate = function() {

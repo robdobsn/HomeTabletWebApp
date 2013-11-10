@@ -7,10 +7,7 @@ class CalendarTile extends Tile
 	addToDoc: (elemToAddTo) ->
 		super()
 		cssTag = "sqInner"
-		@requestCalUpdate()
-		setInterval =>
-			@requestCalUpdate()
-		, 600000
+		@setRefreshInterval(300, @requestCalUpdate, true)
 
 	requestCalUpdate: ->
 		$.ajax @calendarURL,
