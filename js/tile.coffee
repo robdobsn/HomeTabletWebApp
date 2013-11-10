@@ -20,6 +20,9 @@ class Tile
 		@contents = $("##{@tileId}>.sqInner")
 
 	removeFromDoc: ->
+		console.log("clearInterval " + @refreshId)
+		if @refreshId?
+			clearInterval(@refreshId)
 		$('#'+@tileId).remove()
 
 	setTileIndex: (@tileIdx) ->
@@ -53,3 +56,11 @@ class Tile
 		$('#'+@tileId).css {
 			"display": "none"
 			}		
+
+	setRefreshInterval: (intervalInSecs, @callbackFn, firstCallNow) ->
+		if firstCallNow
+			@callbackFn()
+		@refreshId = setInterval =>
+			@callbackFn()
+		, intervalInSecs * 1000
+		console.log("setInterval " + @refreshId + " intv = " + intervalInSecs)

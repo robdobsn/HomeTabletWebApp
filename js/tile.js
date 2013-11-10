@@ -21,6 +21,10 @@ Tile = (function() {
   };
 
   Tile.prototype.removeFromDoc = function() {
+    console.log("clearInterval " + this.refreshId);
+    if (this.refreshId != null) {
+      clearInterval(this.refreshId);
+    }
     return $('#' + this.tileId).remove();
   };
 
@@ -74,6 +78,18 @@ Tile = (function() {
     return $('#' + this.tileId).css({
       "display": "none"
     });
+  };
+
+  Tile.prototype.setRefreshInterval = function(intervalInSecs, callbackFn, firstCallNow) {
+    var _this = this;
+    this.callbackFn = callbackFn;
+    if (firstCallNow) {
+      this.callbackFn();
+    }
+    this.refreshId = setInterval(function() {
+      return _this.callbackFn();
+    }, intervalInSecs * 1000);
+    return console.log("setInterval " + this.refreshId + " intv = " + intervalInSecs);
   };
 
   return Tile;
